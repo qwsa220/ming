@@ -7,8 +7,6 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
         }
         body {
             background-color: #000;
@@ -18,30 +16,36 @@
             overflow: hidden;
         }
         .name {
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
             animation: fall 5s linear forwards;
             text-align: center;
             font-size: 2em;
-            width: 100%;
-            margin-bottom: 10px; /* To maintain a safe distance between names */
-        }
-        @keyframes fall {
-            to { bottom: 0; }
         }
         #addName {
-            align-self: flex-end;
+            position: absolute;
+            top: 10px;
+            right: 10px;
             background-color: #fff;
             color: #000;
             border: none;
             padding: 10px;
-            margin-bottom: 10px;
         }
         #names {
-            flex-grow: 1;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column;
             align-items: center;
             justify-content: flex-end;
+        }
+        @keyframes fall {
+            to { top: calc(100% - 1.5em); }
         }
     </style>
 </head>
@@ -77,6 +81,7 @@
             var nameElement = document.createElement("div");
             nameElement.className = "name";
             nameElement.textContent = name;
+            // Add new names at the top.
             document.getElementById("names").prepend(nameElement);
         }
     </script>
