@@ -45,17 +45,32 @@
     <button id="addName">添加名字</button>
 
     <script>
+        // 当页面加载时，获取所有已保存的名字并把它们添加到页面上。
+        var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
+
+        savedNames.forEach(function(name) {
+            addNameToPage(name);
+        });
+
         document.getElementById("addName").onclick = function() {
             var name = prompt("请输入名字");
 
             if (name.length < 2 || name.length > 4) {
                 alert("请填写正确的名字");
             } else {
-                var nameElement = document.createElement("div");
-                nameElement.className = "name";
-                nameElement.textContent = name;
-                document.getElementById("names").appendChild(nameElement);
+                addNameToPage(name);
+
+                // 将新名字保存到本地存储
+                savedNames.push(name);
+                localStorage.setItem("names", JSON.stringify(savedNames));
             }
+        };
+
+        function addNameToPage(name) {
+            var nameElement = document.createElement("div");
+            nameElement.className = "name";
+            nameElement.textContent = name;
+            document.getElementById("names").appendChild(nameElement);
         }
     </script>
 </body>
