@@ -57,7 +57,7 @@
 
         savedNames.forEach(name => {
             addNameToPage(name);
-            delay += 5;
+            delay += 0.5;
         });
 
         document.getElementById("addName").onclick = function() {
@@ -68,7 +68,7 @@
             } else {
                 addNameToPage(name);
                 savedNames.push(name);
-                delay += 5;
+                delay += 0.5;
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
         };
