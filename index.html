@@ -44,7 +44,7 @@
     </div>
 
     <script>
-        const SECRET_KEY = "$2a$10$gJujoelb6roHuD4OuvE3R.BPpmUKWirao0pMXiY1vYDSRIUf38H5m";
+        const SECRET_KEY = "$2a$10$CAWIN/ZMt1YmEy9SEfZePeFh9qU/74A.tgMclhqnEkfXIoB3wyGF6";
         const BIN_ID = '65b86aff1396ee70b982c111';
         var delay = 0;
 
@@ -57,8 +57,8 @@
                 alert("请填写正确的名字");
             } else {
                 addNameToPage(name);
+                saveData(name);
                 delay += 0.5;
-                saveData();
             }
         };
 
@@ -72,26 +72,9 @@
             .then(data => {
                 if (data.record && Array.isArray(data.record)) {
                     data.record.forEach(name => {
-                    addNameToPage(name);
-                    delay += 0.5;
+                        addNameToPage(name);
                     });
                 }
-            })
-            .catch(console.error);
-        }
-
-        function saveData() {
-            fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': SECRET_KEY
-                },
-                body: JSON.stringify([...document.getElementsByClassName('name')].map(e => e.textContent))
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
             })
             .catch(console.error);
         }
@@ -102,6 +85,24 @@
             nameElement.textContent = name;
             nameElement.style.animationDelay = `${delay}s`;
             document.getElementById("names").appendChild(nameElement);
+        }
+
+        function saveData(name) {
+            let names = [...document.getElementsByClassName("name")].map(e => e.textContent);
+            if (name) names.push(name);
+            fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': SECRET_KEY
+                },
+                body: JSON.stringify(names)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(console.error);
         }
     </script>
 </body>
