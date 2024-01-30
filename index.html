@@ -39,12 +39,14 @@
 </head>
 <body>
     <button id="addName">添加名字</button>
-    <div id="names"></div>
+    <div id="names">
+        <div class="name">梁志文</div>
+    </div>
 
     <script>
         var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
-        var namesDiv = document.getElementById("names");
 
+        // 通过插入方式，使新名字出现在旧名字上方
         savedNames.forEach(function(name) {
             addNameToPage(name);
         });
@@ -55,14 +57,9 @@
             if (name.length < 2 || name.length > 4) {
                 alert("请填写正确的名字");
             } else {
-                savedNames.unshift(name);
+                addNameToPage(name);
+                savedNames.push(name);
                 localStorage.setItem("names", JSON.stringify(savedNames));
-
-                // 清空之前的名字并重新添加所有的名字，新添加的在上面
-                namesDiv.innerHTML = '';
-                savedNames.forEach(function(name) {
-                    addNameToPage(name);
-                });
             }
         };
 
@@ -70,9 +67,8 @@
             var nameElement = document.createElement("div");
             nameElement.className = "name";
             nameElement.textContent = name;
-
-            // 添加元素到namesDiv的开头
-            namesDiv.prepend(nameElement);
+            var parentElement = document.getElementById("names");
+            parentElement.insertBefore(nameElement, parentElement.firstChild);
         }
     </script>
 </body>
