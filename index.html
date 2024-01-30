@@ -57,8 +57,8 @@
             } else {
                 savedNames.push(name);
                 addNameToPage(name);
-                saveData();
                 delay += 0.5;
+                saveData();
             }
         };
 
@@ -72,9 +72,8 @@
             .then(data => {
                 if (data.record && Array.isArray(data.record)) {
                     savedNames = data.record;
-                    savedNames.forEach(name => {
+                    savedNames.sort().forEach(name => {
                         addNameToPage(name);
-                        delay += 0.5;
                     });
                 }
             })
@@ -103,6 +102,7 @@
         }
 
         function saveData() {
+            savedNames.sort();
             fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: 'PUT',
                 headers: {
