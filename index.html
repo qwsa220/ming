@@ -17,13 +17,16 @@
         }
         .name {
             position: absolute;
-            animation: fall 5s linear forwards;
+            top: calc(100% - 1em);
             width: 100%;
             text-align: center;
             font-size: 2em;
         }
+        .name.falling {
+            animation: fall 5s linear forwards;
+        }
         @keyframes fall {
-            to { top: calc(100% - 1em); }
+            to { top: 0; }
         }
         #addName, #removeNames {
             position: absolute;
@@ -45,11 +48,11 @@
 <body>
     <button id="addName">添加名字</button>
     <button id="removeNames">清除所有名字</button>
-    <div id="names"></div>
+    <div id="namesContainer"></div>
 
     <script>
-        const PASSWORD = "1Q1Q1Q1q1q1q"; 
-        var savedNames = JSON.parse(localStorage.getItem("names") || []);
+        const PASSWORD = "1Q1Q1Q1q1q1q";
+        var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
 
         savedNames.forEach(function(name) {
             addNameToPage(name);
@@ -61,6 +64,11 @@
             if (name.length < 2 || name.length > 4) {
                 alert("请填写正确的名字");
             } else {
+                // 移除所有名字的.falling类，停止所有动画
+                document.querySelectorAll('.falling').forEach(function(nameElement) {
+                    nameElement.classList.remove('falling');
+                });
+                
                 addNameToPage(name);
                 savedNames.push(name);
                 localStorage.setItem("names", JSON.stringify(savedNames));
@@ -70,11 +78,8 @@
         document.getElementById("removeNames").onclick = function() {
             var input = prompt("请输入密码");
 
-            if (input === PASSWORD) { 
-                var namesContainer = document.getElementById("names");
-                while (namesContainer.firstChild) {
-                    namesContainer.removeChild(namesContainer.lastChild);
-                }
+            if (input === PASSWORD) {
+                document.getElementById('namesContainer').innerHTML = "";
                 savedNames = [];
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
@@ -82,15 +87,10 @@
 
         function addNameToPage(name) {
             var nameElement = document.createElement("div");
-            nameElement.className = "name";
+            nameElement.className = "name falling";
             nameElement.textContent = name;
-
-            var count = savedNames.length;
-            // 指定每个名字元素的初始位置
-            nameElement.style.top = "-" + (count * 30) + "px"; 
-
-            var parentElement = document.getElementById("names");
-            parentElement.insertBefore(nameElement, parentElement.firstChild);
+            var container = document.getElementById("namesContainer");
+            container.insertBefore(nameElement, container.firstChild);
         }
     </script>
 </body>
