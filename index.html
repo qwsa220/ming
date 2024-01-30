@@ -17,7 +17,7 @@
         }
         .name {
             position: absolute;
-            top: 0;
+            bottom: 100%;
             animation: fall 5s linear forwards;
             width: 100%;
             text-align: center;
@@ -25,7 +25,7 @@
             height: 1.2em;
         }
         @keyframes fall {
-            to { top: calc(100% - 1.2em); }
+            to { bottom: 0; }
         }
         #addName, #removeNames {
             position: absolute;
@@ -48,14 +48,13 @@
     <button id="addName">添加名字</button>
     <button id="removeNames">清除所有名字</button>
     <div id="names">
-        <div class="name" style="top: 0;">梁志文</div>
+        <div class="name">梁志文</div>
     </div>
 
     <script>
         const PASSWORD = "1Q1Q1Q1q1q1q";
         var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
-        var nameTop = 1.2; // 当前名字顶端的位置
-
+        
         savedNames.forEach(name => {
             addNameToPage(name);
         });
@@ -78,7 +77,6 @@
             if (input === PASSWORD) { 
                 document.getElementById("names").innerHTML = '';
                 savedNames = [];
-                nameTop = 1.2; // 重置名字顶端的位置
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
         };
@@ -87,9 +85,7 @@
             var nameElement = document.createElement("div");
             nameElement.className = "name";
             nameElement.textContent = name;
-            nameElement.style.top = `${nameTop}em`;
             document.getElementById("names").appendChild(nameElement);
-            nameTop += 1.2;
         }
     </script>
 </body>
