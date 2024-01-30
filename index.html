@@ -27,31 +27,23 @@
         @keyframes fall {
             to { bottom: 0; }
         }
-        #addName, #removeNames {
+        #addName {
             position: absolute;
+            right: 20px;
+            top: 20px;
             background-color: #fff;
             color: #000;
             border: none;
             padding: 10px;
         }
-        #addName {
-            right: 20px;
-            top: 20px;
-        }
-        #removeNames {
-            left: 20px;
-            top: 20px;
-        }
     </style>
 </head>
 <body>
     <button id="addName">添加名字</button>
-    <button id="removeNames">清除所有名字</button>
     <div id="names">
     </div>
 
     <script>
-        const PASSWORD = "1Q1Q1Q1q1q1q";
         var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
         var delay = 0;
 
@@ -71,17 +63,6 @@
                 addNameToPage(name);
                 savedNames.push(name);
                 delay += 0.5;
-                localStorage.setItem("names", JSON.stringify(savedNames));
-            }
-        };
-
-        document.getElementById("removeNames").onclick = function() {
-            var input = prompt("请输入密码");
-
-            if (input === PASSWORD) {
-                document.getElementById("names").innerHTML = '';
-                savedNames = [];
-                delay = 0;
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
         };
