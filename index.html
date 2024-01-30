@@ -13,6 +13,7 @@
             color: #fff;
             padding: 20px;
             position: relative;
+            overflow: hidden;
         }
         .name {
             position: absolute;
@@ -34,89 +35,78 @@
             border: none;
             padding: 10px;
         }
+        #completed {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <button id="addName">添加名字</button>
     <div id="names">
     </div>
+    <div id="completed">
+    </div>
 
     <script>
         const SECRET_KEY = "$2a$10$CAWIN/ZMt1YmEy9SEfZePeFh9qU/74A.tgMclhqnEkfXIoB3wyGF6";
         const BIN_ID = '65b86aff1396ee70b982c111';
-        var delay = 0;
-        var savedNames = [];
+        let delay = 0;
+        let toBeSaved = [];
 
-        fetchData();
+        document.getElementById("addName").addEventListener("click", function() {
+            const name = prompt("请输入名字");
 
-        document.getElementById("addName").onclick = function() {
-            var name = prompt("请输入名字");
-
-            if (name.length < 2 || name.length > 4) {
+            if(name.length < 2 || name.length > 4) {
                 alert("请填写正确的名字");
             } else {
-                savedNames.push(name);
+                if (toBeSaved.includes(name)) {
+                    alert("该名字已存在！");
+                    return;
+                }
+                toBeSaved.push(name);
                 addNameToPage(name);
-                delay += 0.5;
-                saveData();
             }
-        };
-
-        function fetchData() {
-            fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                headers: {
-                    'X-Master-Key': SECRET_KEY
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.record && Array.isArray(data.record)) {
-                    savedNames = data.record;
-                    savedNames.sort().forEach(name => {
-                        addNameToPage(name);
-                    });
-                }
-            })
-            .catch(console.error);
-        }
+        });
 
         function addNameToPage(name) {
-            var nameElement = document.createElement("div");
+            let nameElement = document.createElement("div");
+            let nameNode = document.createTextNode(name);
+
+            nameElement.appendChild(nameNode);
             nameElement.className = "name";
-            nameElement.textContent = name;
             nameElement.style.animationDelay = `${delay}s`;
+
+            delay += 0.5;
             document.getElementById("names").appendChild(nameElement);
 
-            // 创建一个观察者实例，监听名字元素的移除
-            var observer = new MutationObserver(() => {
-                if (!document.body.contains(nameElement)) {
-                    // 如果名字元素被移除，那么我们更新 `savedNames` 并保存到 JSONBin
-                    savedNames = savedNames.filter(savedName => savedName !== name);
-                    saveData();
-                    observer.disconnect(); // 取消观察
-                }
+            let observer = new MutationObserver((mutations) => {
+                // 当名字完成降落动画后，移动到 #completed 容器中
+                // 这样 MutationObserver 就不会再次观测到它
+                mutations.forEach((mutation) => {
+                    if (mutation.target.parentNode === null) {
+                        document.getElementById("completed").appendChild(mutation.target);
+                    }
+                });
             });
 
-            // 开始观察
-            observer.observe(document.body, {childList: true, subtree: true});
+            observer.observe(document.getElementById("names"), {childList: true});
         }
 
-        function saveData() {
-            savedNames.sort();
-            fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': SECRET_KEY
-                },
-                body: JSON.stringify(savedNames)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(console.error);
-        }
+        setInterval(function() { // 每秒保存一次
+            if (toBeSaved.length > 0) {
+                fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': SECRET_KEY
+                    },
+                    body: JSON.stringify(toBeSaved)
+                })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(console.error);
+            }
+        }, 1000);
     </script>
 </body>
 </html>
