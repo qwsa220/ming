@@ -13,7 +13,6 @@
             color: #fff;
             padding: 20px;
             position: relative;
-            overflow: hidden;
         }
         .name {
             position: absolute;
@@ -22,7 +21,6 @@
             width: 100%;
             text-align: center;
             font-size: 2em;
-            height: 1.2em;
         }
         @keyframes fall {
             to { bottom: 0; }
@@ -47,6 +45,7 @@
         const SECRET_KEY = "$2a$10$CAWIN/ZMt1YmEy9SEfZePeFh9qU/74A.tgMclhqnEkfXIoB3wyGF6";
         const BIN_ID = '65b86aff1396ee70b982c111';
         var delay = 0;
+        var savedNames = [];
 
         fetchData();
 
@@ -56,8 +55,9 @@
             if (name.length < 2 || name.length > 4) {
                 alert("请填写正确的名字");
             } else {
+                savedNames.push(name);
                 addNameToPage(name);
-                saveData(name);
+                saveData();
                 delay += 0.5;
             }
         };
@@ -71,8 +71,10 @@
             .then(response => response.json())
             .then(data => {
                 if (data.record && Array.isArray(data.record)) {
-                    data.record.forEach(name => {
+                    savedNames = data.record;
+                    savedNames.forEach(name => {
                         addNameToPage(name);
+                        delay += 0.5;
                     });
                 }
             })
@@ -87,16 +89,14 @@
             document.getElementById("names").appendChild(nameElement);
         }
 
-        function saveData(name) {
-            let names = [...document.getElementsByClassName("name")].map(e => e.textContent);
-            if (name) names.push(name);
+        function saveData() {
             fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Master-Key': SECRET_KEY
                 },
-                body: JSON.stringify(names)
+                body: JSON.stringify(savedNames)
             })
             .then(response => response.json())
             .then(data => {
