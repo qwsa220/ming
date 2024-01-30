@@ -1,79 +1,67 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>名字动画</title>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #000;
-            color: #fff;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        .name {
-            position: absolute;
-            bottom: 100%;
-            animation: fall 5s linear forwards;
-            width: 100%;
-            text-align: center;
-            font-size: 2em;
-            height: 1.2em;
-        }
-        @keyframes fall {
-            to { bottom: 0; }
-        }
-        #addName {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            background-color: #fff;
-            color: #000;
-            border: none;
-            padding: 10px;
-        }
-    </style>
-</head>
-<body>
-    <button id="addName">添加名字</button>
-    <div id="names">
-    </div>
+<script>
+    var delay = 0;
 
-    <script>
-        var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
-        var delay = 0;
+    loadNames();
 
-        savedNames.forEach(name => {
-            addNameToPage(name);
-            delay += 0.5;
+    document.getElementById("addName").onclick = function() {
+       var name = prompt("请输入名字");
+
+        if (name.length < 2 || name.length > 4) {
+            alert("请填写正确的名字");
+        } else {
+            checkIfNameExists(name); // 检查名字是否已存在
+        }
+    };
+
+    function loadNames() {
+        fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111/latest', {
+            headers: {
+                'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            data.names.forEach(name => {
+                addNameToPage(name);
+                delay += 0.5;
+            });
         });
+    }
 
-        document.getElementById("addName").onclick = function() {
-            var name = prompt("请输入名字");
-
-            if (name.length < 2 || name.length > 4) {
-                alert("请填写正确的名字");
-            } else if (savedNames.includes(name)) {
+    function checkIfNameExists(name) {
+        fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111/latest', {
+            headers: {
+                'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6ID',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.names.includes(name)) {
                 alert("名字已存在，请输入不同的名字"); // 如果名字已存在
             } else {
+                saveNameToDatabase(name);
                 addNameToPage(name);
-                savedNames.push(name);
                 delay += 0.5;
-                localStorage.setItem("names", JSON.stringify(savedNames));
             }
-        };
+        });
+    }
 
-        function addNameToPage(name) {
-            var nameElement = document.createElement("div");
-            nameElement.className = "name";
-            nameElement.textContent = name;
-            nameElement.style.animationDelay = `${delay}s`;
-            document.getElementById("names").appendChild(nameElement);
-        }
-    </script>
-</body>
-</html>
+    function saveNameToDatabase(name) {
+        fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6',
+            },
+            body: JSON.stringify({ names: [name] }) // 修改为你的数据格式
+        });
+    }
+
+    function addNameToPage(name) {
+        var nameElement = document.createElement("div");
+        nameElement.className = "name";
+        nameElement.textContent = name;
+        nameElement.style.animationDelay = `${delay}s`;
+        document.getElementById("names").appendChild(nameElement);
+    }
+</script>
