@@ -1,3 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>名字动画</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .name {
+            position: absolute;
+            bottom: 100%;
+            animation: fall 5s linear forwards;
+            width: 100%;
+            text-align: center;
+            font-size: 2em;
+            height: 1.2em;
+        }
+        @keyframes fall {
+            to { bottom: 0; }
+        }
+        #addName {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <button id="addName">添加名字</button>
+    <div id="names">
+    </div>
 <script>
     var delay = 0;
 
