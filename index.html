@@ -42,70 +42,73 @@
     <button id="addName">添加名字</button>
     <div id="names">
     </div>
-<script>
-    var delay = 0;
 
-    loadNames();
+    <script>
+        var delay = 0;
 
-    document.getElementById("addName").onclick = function() {
-       var name = prompt("请输入名字");
+        loadNames();
 
-        if (name.length < 2 || name.length > 4) {
-            alert("请填写正确的名字");
-        } else {
-            checkIfNameExists(name); // 检查名字是否已存在
-        }
-    };
+        document.getElementById("addName").onclick = function() {
+           var name = prompt("请输入名字");
 
-    function loadNames() {
-        fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111/latest', {
-            headers: {
-                'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            data.names.forEach(name => {
-                addNameToPage(name);
-                delay += 0.5;
-            });
-        });
-    }
-
-    function checkIfNameExists(name) {
-        fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111/latest', {
-            headers: {
-                'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6ID',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.names.includes(name)) {
-                alert("名字已存在，请输入不同的名字"); // 如果名字已存在
+            if (name.length < 2 || name.length > 4) {
+                alert("请填写正确的名字");
             } else {
-                saveNameToDatabase(name);
-                addNameToPage(name);
-                delay += 0.5;
+                checkIfNameExists(name); // 检查名字是否已存在
             }
-        });
-    }
+        };
 
-    function saveNameToDatabase(name) {
-        fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6',
-            },
-            body: JSON.stringify({ names: [name] }) // 修改为你的数据格式
-        });
-    }
+        function loadNames() {
+            fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111/latest', {
+                headers: {
+                    'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.names.forEach(name => {
+                    addNameToPage(name);
+                    delay += 0.5;
+                });
+            });
+        }
 
-    function addNameToPage(name) {
-        var nameElement = document.createElement("div");
-        nameElement.className = "name";
-        nameElement.textContent = name;
-        nameElement.style.animationDelay = `${delay}s`;
-        document.getElementById("names").appendChild(nameElement);
-    }
-</script>
+        function checkIfNameExists(name) {
+            fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111/latest', {
+                headers: {
+                    'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.names.includes(name)) {
+                    alert("名字已存在，请输入不同的名字"); // 如果名字已存在
+                } else {
+                    saveNameToDatabase(name);
+                    addNameToPage(name);
+                    delay += 0.5;
+                }
+            });
+        }
+
+        function saveNameToDatabase(name) {
+            fetch('https://api.jsonbin.io/b/65b86aff1396ee70b982c111', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'secret-key': '$2a$10$isQKRDWGp7qP2AXdl91YjexSTljGJfvClG2XD0fJ1mrcoHVvwscF6',
+                },
+                body: JSON.stringify({ names: [name] }) // 修改为你的数据格式
+            });
+        }
+
+        function addNameToPage(name) {
+            var nameElement = document.createElement("div");
+            nameElement.className = "name";
+            nameElement.textContent = name;
+            nameElement.style.animationDelay = `${delay}s`;
+            document.getElementById("names").appendChild(nameElement);
+        }
+    </script>
+</body>
+</html>
