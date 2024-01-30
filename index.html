@@ -18,47 +18,32 @@
         .name {
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
             animation: fall 5s linear forwards;
+            width: 100%;
             text-align: center;
             font-size: 2em;
         }
+        @keyframes fall {
+            to { top: calc(100% - 1em); }
+        }
         #addName {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            right: 20px;
+            top: 20px;
             background-color: #fff;
             color: #000;
             border: none;
             padding: 10px;
         }
-        #names {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-        }
-        @keyframes fall {
-            to { top: calc(100% - 1.5em); }
-        }
     </style>
 </head>
 <body>
-    
     <button id="addName">添加名字</button>
-
-    <div id="names">
-        <div class="name">梁志文</div>
-    </div>
+    <div id="names"></div>
 
     <script>
         var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
+        var namesDiv = document.getElementById("names");
 
         savedNames.forEach(function(name) {
             addNameToPage(name);
@@ -70,10 +55,14 @@
             if (name.length < 2 || name.length > 4) {
                 alert("请填写正确的名字");
             } else {
-                addNameToPage(name);
-
-                savedNames.push(name);
+                savedNames.unshift(name);
                 localStorage.setItem("names", JSON.stringify(savedNames));
+
+                // 清空之前的名字并重新添加所有的名字，新添加的在上面
+                namesDiv.innerHTML = '';
+                savedNames.forEach(function(name) {
+                    addNameToPage(name);
+                });
             }
         };
 
@@ -81,8 +70,9 @@
             var nameElement = document.createElement("div");
             nameElement.className = "name";
             nameElement.textContent = name;
-            // Add new names at the top.
-            document.getElementById("names").prepend(nameElement);
+
+            // 添加元素到namesDiv的开头
+            namesDiv.prepend(nameElement);
         }
     </script>
 </body>
