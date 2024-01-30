@@ -7,6 +7,8 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
         }
         body {
             background-color: #000;
@@ -16,36 +18,42 @@
             overflow: hidden;
         }
         .name {
-            position: absolute;
-            top: 0;
+            position: relative;
             animation: fall 5s linear forwards;
-            width: 100%;
             text-align: center;
             font-size: 2em;
+            width: 100%;
+            margin-bottom: 10px; /* To maintain a safe distance between names */
         }
         @keyframes fall {
-            to { top: calc(100% - 1em); }
+            to { bottom: 0; }
         }
         #addName {
-            position: absolute;
-            right: 20px;
-            bottom: 20px;
+            align-self: flex-end;
             background-color: #fff;
             color: #000;
             border: none;
             padding: 10px;
+            margin-bottom: 10px;
+        }
+        #names {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            justify-content: flex-end;
         }
     </style>
 </head>
 <body>
+    
+    <button id="addName">添加名字</button>
+
     <div id="names">
         <div class="name">梁志文</div>
     </div>
 
-    <button id="addName">添加名字</button>
-
     <script>
-        // 当页面加载时，获取所有已保存的名字并把它们添加到页面上。
         var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
 
         savedNames.forEach(function(name) {
@@ -60,7 +68,6 @@
             } else {
                 addNameToPage(name);
 
-                // 将新名字保存到本地存储
                 savedNames.push(name);
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
@@ -70,7 +77,7 @@
             var nameElement = document.createElement("div");
             nameElement.className = "name";
             nameElement.textContent = name;
-            document.getElementById("names").appendChild(nameElement);
+            document.getElementById("names").prepend(nameElement);
         }
     </script>
 </body>
