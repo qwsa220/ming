@@ -17,16 +17,15 @@
         }
         .name {
             position: absolute;
-            top: calc(100% - 1em);
+            top: 0;
+            animation: fall 5s linear forwards;
             width: 100%;
             text-align: center;
             font-size: 2em;
-        }
-        .name.falling {
-            animation: fall 5s linear forwards;
+            height: 1.2em;
         }
         @keyframes fall {
-            to { top: 0; }
+            to { top: calc(100% - 1.2em); }
         }
         #addName, #removeNames {
             position: absolute;
@@ -48,13 +47,16 @@
 <body>
     <button id="addName">添加名字</button>
     <button id="removeNames">清除所有名字</button>
-    <div id="namesContainer"></div>
+    <div id="names">
+        <div class="name" style="top: 0;">梁志文</div>
+    </div>
 
     <script>
         const PASSWORD = "1Q1Q1Q1q1q1q";
         var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
+        var nameTop = 1.2; // 当前名字顶端的位置
 
-        savedNames.forEach(function(name) {
+        savedNames.forEach(name => {
             addNameToPage(name);
         });
 
@@ -64,11 +66,6 @@
             if (name.length < 2 || name.length > 4) {
                 alert("请填写正确的名字");
             } else {
-                // 移除所有名字的.falling类，停止所有动画
-                document.querySelectorAll('.falling').forEach(function(nameElement) {
-                    nameElement.classList.remove('falling');
-                });
-                
                 addNameToPage(name);
                 savedNames.push(name);
                 localStorage.setItem("names", JSON.stringify(savedNames));
@@ -78,19 +75,21 @@
         document.getElementById("removeNames").onclick = function() {
             var input = prompt("请输入密码");
 
-            if (input === PASSWORD) {
-                document.getElementById('namesContainer').innerHTML = "";
+            if (input === PASSWORD) { 
+                document.getElementById("names").innerHTML = '';
                 savedNames = [];
+                nameTop = 1.2; // 重置名字顶端的位置
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
         };
 
         function addNameToPage(name) {
             var nameElement = document.createElement("div");
-            nameElement.className = "name falling";
+            nameElement.className = "name";
             nameElement.textContent = name;
-            var container = document.getElementById("namesContainer");
-            container.insertBefore(nameElement, container.firstChild);
+            nameElement.style.top = `${nameTop}em`;
+            document.getElementById("names").appendChild(nameElement);
+            nameTop += 1.2;
         }
     </script>
 </body>
