@@ -26,27 +26,34 @@
         @keyframes fall {
             to { top: calc(100% - 1em); }
         }
-        #addName {
+        #addName, #removeNames {
             position: absolute;
-            right: 20px;
-            top: 20px;
             background-color: #fff;
             color: #000;
             border: none;
             padding: 10px;
         }
+        #addName {
+            right: 20px;
+            top: 20px;
+        }
+        #removeNames {
+            left: 20px;
+            top: 20px;
+        }
     </style>
 </head>
 <body>
     <button id="addName">添加名字</button>
+    <button id="removeNames">清除所有名字</button>
     <div id="names">
         <div class="name">梁志文</div>
     </div>
 
     <script>
+        const PASSWORD = "1Q1Q1Q1q1q1q"; // 预设的密码
         var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
 
-        // 通过插入方式，使新名字出现在旧名字上方
         savedNames.forEach(function(name) {
             addNameToPage(name);
         });
@@ -59,6 +66,21 @@
             } else {
                 addNameToPage(name);
                 savedNames.push(name);
+                localStorage.setItem("names", JSON.stringify(savedNames));
+            }
+        };
+
+        document.getElementById("removeNames").onclick = function() {
+            var input = prompt("请输入密码");
+
+            if (input === PASSWORD) { // 如果输入的密码跟预设的一样
+                var namesContainer = document.getElementById("names");
+                // 移除所有的名字
+                while (namesContainer.firstChild) {
+                    namesContainer.removeChild(namesContainer.lastChild);
+                }
+                // 清空存储的名字
+                savedNames = [];
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
         };
