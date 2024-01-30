@@ -65,6 +65,8 @@
 
             if (name.length < 2 || name.length > 4) {
                 alert("请填写正确的名字");
+            } else if (savedNames.includes(name)) {
+                alert("名字已存在，请输入不同的名字"); // 如果名字已存在
             } else {
                 addNameToPage(name);
                 savedNames.push(name);
