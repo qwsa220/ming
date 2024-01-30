@@ -22,6 +22,7 @@
             width: 100%;
             text-align: center;
             font-size: 2em;
+            height: 1.2em;
         }
         @keyframes fall {
             to { bottom: 0; }
@@ -35,78 +36,44 @@
             border: none;
             padding: 10px;
         }
-        #completed {
-            display: none;
-        }
     </style>
 </head>
 <body>
     <button id="addName">添加名字</button>
     <div id="names">
     </div>
-    <div id="completed">
-    </div>
 
     <script>
-        const SECRET_KEY = "$2a$10$CAWIN/ZMt1YmEy9SEfZePeFh9qU/74A.tgMclhqnEkfXIoB3wyGF6";
-        const BIN_ID = '65b86aff1396ee70b982c111';
-        let delay = 0;
-        let toBeSaved = [];
+        var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
+        var delay = 0;
 
-        document.getElementById("addName").addEventListener("click", function() {
-            const name = prompt("请输入名字");
-
-            if(name.length < 2 || name.length > 4) {
-                alert("请填写正确的名字");
-            } else {
-                if (toBeSaved.includes(name)) {
-                    alert("该名字已存在！");
-                    return;
-                }
-                toBeSaved.push(name);
-                addNameToPage(name);
-            }
+        savedNames.forEach(name => {
+            addNameToPage(name);
+            delay += 0.5;
         });
 
-        function addNameToPage(name) {
-            let nameElement = document.createElement("div");
-            let nameNode = document.createTextNode(name);
+        document.getElementById("addName").onclick = function() {
+            var name = prompt("请输入名字");
 
-            nameElement.appendChild(nameNode);
-            nameElement.className = "name";
-            nameElement.style.animationDelay = `${delay}s`;
-
-            delay += 0.5;
-            document.getElementById("names").appendChild(nameElement);
-
-            let observer = new MutationObserver((mutations) => {
-                // 当名字完成降落动画后，移动到 #completed 容器中
-                // 这样 MutationObserver 就不会再次观测到它
-                mutations.forEach((mutation) => {
-                    if (mutation.target.parentNode === null) {
-                        document.getElementById("completed").appendChild(mutation.target);
-                    }
-                });
-            });
-
-            observer.observe(document.getElementById("names"), {childList: true});
-        }
-
-        setInterval(function() { // 每秒保存一次
-            if (toBeSaved.length > 0) {
-                fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': SECRET_KEY
-                    },
-                    body: JSON.stringify(toBeSaved)
-                })
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(console.error);
+            if (name.length < 2 || name.length > 4) {
+                alert("请填写正确的名字");
+            } else if (savedNames.includes(name)) {
+                alert("名字已存在，请输入不同的名字"); // 如果名字已存在
+            } else {
+                addNameToPage(name);
+                savedNames.push(name);
+                delay += 0.5;
+                localStorage.setItem("names", JSON.stringify(savedNames));
             }
-        }, 1000);
+        };
+
+        function addNameToPage(name) {
+            var nameElement = document.createElement("div");
+            nameElement.className = "name";
+            nameElement.textContent = name;
+            nameElement.style.animationDelay = `${delay}s`;
+            document.getElementById("names").appendChild(nameElement);
+        }
     </script>
 </body>
 </html>
