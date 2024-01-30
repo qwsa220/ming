@@ -45,7 +45,7 @@
 
     <script>
         const SECRET_KEY = "$2a$10$CAWIN/ZMt1YmEy9SEfZePeFh9qU/74A.tgMclhqnEkfXIoB3wyGF6";
-        const BIN_ID = '65b86aff1396ee70b982c111';  // your BIN ID
+        const BIN_ID = '65b86aff1396ee70b982c111';
         var delay = 0;
 
         fetchData();
@@ -70,10 +70,12 @@
             })
             .then(response => response.json())
             .then(data => {
-                (data.record || []).forEach(name => {
+                if (data.record && Array.isArray(data.record)) {
+                    data.record.forEach(name => {
                     addNameToPage(name);
                     delay += 0.5;
-                });
+                    });
+                }
             })
             .catch(console.error);
         }
