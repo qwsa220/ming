@@ -48,15 +48,16 @@
     <button id="addName">添加名字</button>
     <button id="removeNames">清除所有名字</button>
     <div id="names">
-        <div class="name">梁志文</div>
     </div>
 
     <script>
         const PASSWORD = "1Q1Q1Q1q1q1q";
         var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
-        
+        var delay = 0;
+
         savedNames.forEach(name => {
             addNameToPage(name);
+            delay += 5;
         });
 
         document.getElementById("addName").onclick = function() {
@@ -67,6 +68,7 @@
             } else {
                 addNameToPage(name);
                 savedNames.push(name);
+                delay += 5;
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
         };
@@ -74,9 +76,10 @@
         document.getElementById("removeNames").onclick = function() {
             var input = prompt("请输入密码");
 
-            if (input === PASSWORD) { 
+            if (input === PASSWORD) {
                 document.getElementById("names").innerHTML = '';
                 savedNames = [];
+                delay = 0;
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
         };
@@ -85,6 +88,7 @@
             var nameElement = document.createElement("div");
             nameElement.className = "name";
             nameElement.textContent = name;
+            nameElement.style.animationDelay = `${delay}s`;
             document.getElementById("names").appendChild(nameElement);
         }
     </script>
