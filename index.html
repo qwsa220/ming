@@ -87,6 +87,19 @@
             nameElement.textContent = name;
             nameElement.style.animationDelay = `${delay}s`;
             document.getElementById("names").appendChild(nameElement);
+
+            // 创建一个观察者实例，监听名字元素的移除
+            var observer = new MutationObserver(() => {
+                if (!document.body.contains(nameElement)) {
+                    // 如果名字元素被移除，那么我们更新 `savedNames` 并保存到 JSONBin
+                    savedNames = savedNames.filter(savedName => savedName !== name);
+                    saveData();
+                    observer.disconnect(); // 取消观察
+                }
+            });
+
+            // 开始观察
+            observer.observe(document.body, {childList: true, subtree: true});
         }
 
         function saveData() {
