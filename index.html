@@ -17,7 +17,6 @@
         }
         .name {
             position: absolute;
-            top: 0;
             animation: fall 5s linear forwards;
             width: 100%;
             text-align: center;
@@ -46,13 +45,11 @@
 <body>
     <button id="addName">添加名字</button>
     <button id="removeNames">清除所有名字</button>
-    <div id="names">
-        <div class="name">梁志文</div>
-    </div>
+    <div id="names"></div>
 
     <script>
-        const PASSWORD = "1Q1Q1Q1q1q1q"; // 预设的密码
-        var savedNames = JSON.parse(localStorage.getItem("names") || "[]");
+        const PASSWORD = "1Q1Q1Q1q1q1q"; 
+        var savedNames = JSON.parse(localStorage.getItem("names") || []);
 
         savedNames.forEach(function(name) {
             addNameToPage(name);
@@ -73,13 +70,11 @@
         document.getElementById("removeNames").onclick = function() {
             var input = prompt("请输入密码");
 
-            if (input === PASSWORD) { // 如果输入的密码跟预设的一样
+            if (input === PASSWORD) { 
                 var namesContainer = document.getElementById("names");
-                // 移除所有的名字
                 while (namesContainer.firstChild) {
                     namesContainer.removeChild(namesContainer.lastChild);
                 }
-                // 清空存储的名字
                 savedNames = [];
                 localStorage.setItem("names", JSON.stringify(savedNames));
             }
@@ -89,6 +84,11 @@
             var nameElement = document.createElement("div");
             nameElement.className = "name";
             nameElement.textContent = name;
+
+            var count = savedNames.length;
+            // 指定每个名字元素的初始位置
+            nameElement.style.top = "-" + (count * 30) + "px"; 
+
             var parentElement = document.getElementById("names");
             parentElement.insertBefore(nameElement, parentElement.firstChild);
         }
