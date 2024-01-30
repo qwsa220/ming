@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>名字动画</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .name {
+            position: absolute;
+            top: 0;
+            animation: fall 5s linear forwards;
+            width: 100%;
+            text-align: center;
+            font-size: 2em;
+        }
+        @keyframes fall {
+            to { top: calc(100% - 1em); }
+        }
+        #addName {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="names">
+        <div class="name">梁志文</div>
+    </div>
+
+    <button id="addName">添加名字</button>
+
+    <script>
+        document.getElementById("addName").onclick = function() {
+            var name = prompt("请输入名字");
+
+            if (name.length < 2 || name.length > 4) {
+                alert("请填写正确的名字");
+            } else {
+                var nameElement = document.createElement("div");
+                nameElement.className = "name";
+                nameElement.textContent = name;
+                document.getElementById("names").appendChild(nameElement);
+            }
+        }
+    </script>
+</body>
+</html>
